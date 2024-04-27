@@ -634,4 +634,13 @@ class MountManagerTest extends TestCase
 
         $this->assertSame('9a0364b9e99bb480dd25e1f0284c8555', $this->mountManager->checksum('first://file.txt'));
     }
+
+    /**
+     * @test
+     */
+    public function get_filesystem(): void
+    {
+        $this->assertSame($this->firstFilesystem, $this->mountManager->getFilesystem('first'));
+        $this->assertSame($this->secondFilesystem, $this->mountManager->getFilesystem('second'));
+    }
 }

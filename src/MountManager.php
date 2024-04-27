@@ -318,6 +318,15 @@ class MountManager implements FilesystemOperator
         return $filesystem->checksum($path, $this->config->extend($config)->toArray());
     }
 
+    public function getFilesystem(string $mountIdentifier): FilesystemOperator
+    {
+        if (!array_key_exists($mountIdentifier, $this->filesystems)) {
+            throw Exception::becauseTheMountWasNotRegistered($mountIdentifier);
+        }
+
+        return $this->filesystems[$mountIdentifier];
+    }
+
     protected function mountFilesystems(array $filesystems): void
     {
         foreach ($filesystems as $key => $filesystem) {
@@ -359,11 +368,7 @@ class MountManager implements FilesystemOperator
         /** @var string $mountPath */
         [$mountIdentifier, $mountPath] = explode('://', $path, 2);
 
-        if ( ! array_key_exists($mountIdentifier, $this->filesystems)) {
-            throw UnableToResolveFilesystemMount::becauseTheMountWasNotRegistered($mountIdentifier);
-        }
-
-        return [$this->filesystems[$mountIdentifier], $mountPath, $mountIdentifier];
+        return [$this->getFilesystem($mountIdentifier), $mountPath, $mountIdentifier];
     }
 
     protected function copyInSameFilesystem(
